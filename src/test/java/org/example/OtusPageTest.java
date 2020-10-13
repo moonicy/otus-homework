@@ -1,11 +1,11 @@
-import io.github.bonigarcia.wdm.WebDriverManager;
+package org.example;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -15,8 +15,9 @@ public class OtusPageTest {
 
     @BeforeAll
     public static void setUp() {
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
+        String driverName = System.getProperty("browser");
+        String[] options = System.getProperty("options").split(";");
+        driver = WebDriverFactory.create(driverName, options);
         logger.info("Driver up");
     }
 
