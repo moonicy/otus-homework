@@ -12,6 +12,9 @@ import org.openqa.selenium.WebElement;
 import java.util.concurrent.TimeUnit;
 
 public abstract class BaseTest {
+
+    protected static String email;
+    protected static String password;
     protected static WebDriver driver;
     private static Logger logger = LogManager.getLogger(BaseTest.class);
 
@@ -20,14 +23,7 @@ public abstract class BaseTest {
 
     @BeforeAll
     public static void setUp() {
-        String driverName = System.getProperty("browser") == null
-                ? Drivers.CHROME.toString()
-                : System.getProperty("browser");
-        String optionsString = System.getProperty("options");
-        String[] options = optionsString == null ? new String[]{"--start-maximized"} : optionsString.split(";");
-        driver = WebDriverFactory.create(driverName, options);
-        driver.manage().timeouts().implicitlyWait(IMPLICITLY_WAIT, TimeUnit.SECONDS);
-        logger.info("Driver up");
+        initDriver();
     }
 
     @AfterAll
@@ -37,6 +33,8 @@ public abstract class BaseTest {
         }
     }
 
+
+
     protected void clickWithJS(WebElement element) {
         JavascriptExecutor executor = (JavascriptExecutor)driver;
         executor.executeScript("arguments[0].click()", element);
@@ -45,5 +43,24 @@ public abstract class BaseTest {
     protected WebElement getLinkElementByText(String text) {
         By linkElementByTextLocator = By.xpath(String.format("//a[text()=\"%s\"]", text));
         return driver.findElement(linkElementByTextLocator);
+    }
+
+    protected static void reInitDriver() {
+        driver.quit();
+        initDriver();
+    }
+
+    protected static void initDriver() {
+        email = System.getProperty("email");
+        password = System.getProperty("password");
+
+        String driverName = System.getProperty("browser") == null
+                ? Drivers.CHROME.toString()
+                : System.getProperty("browser");
+        String optionsString = System.getProperty("options");
+        String[] options = optionsString == null ? new String[]{"--start-maximized"} : optionsString.split(";");
+        driver = WebDriverFactory.create(driverName, options);
+        driver.manage().timeouts().implicitlyWait(IMPLICITLY_WAIT, TimeUnit.SECONDS);
+        logger.info("Driver up");
     }
 }
